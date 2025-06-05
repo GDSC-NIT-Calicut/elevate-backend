@@ -1,0 +1,15 @@
+venv
+backend/db.sqlite3
+
+backend/backend/__pycache__
+backend/company/__pycache__
+backend/experience/__pycache__
+backend/tag/__pycache__
+backend/user/__pycache__
+
+
+backend/backend/migrations
+backend/company/migrations
+backend/experience/migrations
+backend/tag/migrations
+backend/user/migrations
