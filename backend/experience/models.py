@@ -25,4 +25,3 @@ class Experience(models.Model):
     author=models.ForeignKey(User,on_delete=models.CASCADE,related_name='experiences')
     company = models.ForeignKey(Company, on_delete=models.CASCADE, related_name='experiences')
     tags=models.ManyToManyField(Tag, related_name='experiences', blank=True)
-

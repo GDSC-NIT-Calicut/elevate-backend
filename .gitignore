@@ -7,9 +7,11 @@ backend/experience/__pycache__
 backend/tag/__pycache__
 backend/user/__pycache__
 
+backend/backend/migrations/__pycache__
+backend/company/migrations/__pycache__
+backend/experience/migrations/__pycache__
+backend/tag/migrations/__pycache__
+backend/user/migrations/__pycache__
 
-backend/backend/migrations
-backend/company/migrations
-backend/experience/migrations
-backend/tag/migrations
-backend/user/migrations
+
+
