@@ -24,6 +24,9 @@ from django.http import JsonResponse
 
 from django.conf import settings
 
+from rest_framework.permissions import IsAdminUser,IsAuthenticated
+from rest_framework_simplejwt.authentication import JWTAuthentication
+
 CLIENT_ID=settings.CLIENT_ID
 
 def verify_google_id_token(token: str):
@@ -82,6 +85,7 @@ class Signin(APIView):
             },
             "user": {
                 "email": user.email,
+                "backup_email":user.backup_email,
                 "name": user.name,
                 "roll_number": user.roll_number,
                 "department": user.department,
@@ -90,3 +94,30 @@ class Signin(APIView):
             }
         }, status=status.HTTP_202_ACCEPTED)
         
+class Backup_Email(APIView):
+
+    authentication_classes=[JWTAuthentication]
+    permission_classes=[IsAuthenticated]
+
+    def post(self,request):
+        user=request.user
+
+        backup_email=request.data.get('backup_email')
+
+        if not backup_email:
+            return Response({
+                "success": False,
+                "message": "Backup email is required."
+            }, status=status.HTTP_400_BAD_REQUEST)
+        
+        user.backup_email=backup_email
+        user.save()
+
+        return Response({
+            "success": True,
+            "message": "Backup email added successfully.",
+            "user": {
+                "email": user.email,
+                "backup_email": user.backup_email
+            }
+        }, status=status.HTTP_200_OK)
