@@ -5,6 +5,12 @@ To activate it
 
 `source venv/bin/activate`
 
+
+Make a .env file in elevate-backend/backend (the same folder as the manage.py file) and add CLIENT_ID
+
+`CLIENT_ID=your-client-id-here`
+
+
 Install the requirements whenever pulling from the repo to make sure you have all the required libraries 
 
 `pip install -r requirements.txt`
@@ -16,9 +22,6 @@ Run migrations whenever you pull from the repo to ensure the changes made in the
 
 `python manage.py migrate`
 
-Make a .env file in elevate-backend/backend (the same folder as the manage.py file) and add CLIENT_ID
-
-`CLIENT_ID=your-client-id-here`
 
 To start the app run 
 
