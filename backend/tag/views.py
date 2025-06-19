@@ -23,15 +23,21 @@ class IsAdminorSPOC(BasePermission):
 
 class ListCreateTag(generics.ListCreateAPIView):
     authentication_classes=[JWTAuthentication]
-    permission_classes=[IsAdminorSPOC]
     queryset=Tag.objects.all()
     serializer_class=TagSerializer
 
+    def get_permissions(self):
+        if self.request.method=='POST':
+            return [IsAdminorSPOC()]
+        return [IsAuthenticated()]
 # Here we do not need to specify a lookup field since Django by default uses pk as the lookup field 
 # Just be sure to add /<int:pk> in the urls.py file
 class TagDetail(generics.RetrieveUpdateDestroyAPIView): 
     authentication_classes=[JWTAuthentication]
-    permission_classes=[IsAdminorSPOC]
     queryset=Tag.objects.all()
     serializer_class=TagSerializer
 
+    def get_permissions(self):
+        if self.request.method=='GET':
+            return [IsAuthenticated()]
+        return [IsAdminorSPOC()]
