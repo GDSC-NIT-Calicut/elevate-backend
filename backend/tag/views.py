@@ -21,7 +21,7 @@ class IsAdminorSPOC(BasePermission):
     def has_permission(self, request, view):
         return request.user.is_authenticated and (request.user.role=='spoc' or request.user.role=='admin')
 
-class CreateTag(generics.ListCreateAPIView):
+class ListCreateTag(generics.ListCreateAPIView):
     authentication_classes=[JWTAuthentication]
     permission_classes=[IsAdminorSPOC]
     queryset=Tag.objects.all()

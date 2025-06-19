@@ -12,9 +12,17 @@ https://docs.djangoproject.com/en/5.2/ref/settings/
 
 from pathlib import Path
 from decouple import config
+import os
 
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
 BASE_DIR = Path(__file__).resolve().parent.parent
+MEDIA_PARENT_DIR=os.path.dirname(os.path.dirname(BASE_DIR))
+print(MEDIA_PARENT_DIR)
+
+MEDIA_ROOT=os.path.join(MEDIA_PARENT_DIR,'media')
+os.makedirs(MEDIA_ROOT, exist_ok=True)  #makedirs creates all intermediate directories if they dont exist, but mkdir doesnt
+
+MEDIA_URL='/media/'  # When serving media files (like uploaded images), their URL path should start with /media/
 
 
 # Quick-start development settings - unsuitable for production
