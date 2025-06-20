@@ -7,7 +7,7 @@ from tag.models import Tag
 # Create your models here.
 
 class Experience(models.Model):
-    cover_image_path = models.CharField(max_length=200)
+    cover_image= models.ImageField(upload_to='experience_images/',null=True,blank=True)
     title = models.CharField(max_length=200)
     role = models.CharField(max_length=100)
     short_description = models.TextField()
