@@ -28,21 +28,31 @@ class IsAdminorSPOC(BasePermission):
 # useful when dealing with large datasets
 
 
-class ListCreateExperience(generics.ListCreateAPIView):
+class ListExperience(APIView):
+    authentication_classes=[JWTAuthentication]
+    permission_classes=[IsAuthenticated]
+
+    def post(self,request):
+        tags=request.data.get('tags',[])
+        if not isinstance(tags, list):
+            return Response({"error": "tags must be a list"}, status=400)
+        if request.user.role in ['admin','spoc']:
+            queryset= Experience.objects.all()
+        else:
+            queryset= Experience.objects.filter(
+                Q(visibility=True,verified=True) | Q(author=request.user)
+            ).distinct()
+        
+        if tags:
+            queryset=queryset.filter(tags__id__in=tags).distinct()
+        serializer = ExperienceSerializer(queryset, many=True, context={'request': request})
+        return Response(serializer.data, status=200)
+
+class CreateExperience(generics.CreateAPIView):
     authentication_classes=[JWTAuthentication]
     permission_classes=[IsAuthenticated]
 
     serializer_class=ExperienceSerializer
-    
-    def get_queryset(self):
-        user=self.request.user
-
-        if user.role in ['admin','spoc']:
-            return Experience.objects.all()
-        else:
-            return Experience.objects.filter(
-                Q(visibility=True,verified=True) | Q(author=user)
-            ).distinct()
 
     def perform_create(self, serializer):
         serializer.save(author=self.request.user)
