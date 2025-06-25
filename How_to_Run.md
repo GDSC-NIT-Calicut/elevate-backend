@@ -31,6 +31,8 @@ To create a superuser (admin) run
 
 `python manage.py createsuperuser`
 
+Login to the admin panel at localhost:8000/admin on the browser (If you edit a user, as of now it wont let you save thier details without a password, add a dummy password if editing the details of the users in the admin panel. We changee the roles of students in here to 'pr','spoc' or 'admin')
+
 Fill in the details that come up. Go to localhost:8000/admin to access the admin portal
 
 If you have to additionally install any libraries, ACTIVATE THE VIRTUAL ENVIRONMENT and then install the library using
