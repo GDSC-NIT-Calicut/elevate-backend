@@ -1,7 +1,26 @@
 from rest_framework import serializers
 from .models import Experience
+from user.models import User
+from tag.models import Tag
+from tag.serializers import TagSerializer
+
+class AuthorSerialzer(serializers.ModelSerializer):
+    class Meta:
+        model = User
+        fields=['id','name','department']
+
+
 
 class ExperienceSerializer(serializers.ModelSerializer):
+    author=AuthorSerialzer(read_only=True)
+    tags=TagSerializer(many=True, read_only=True)
+    tag_ids=serializers.PrimaryKeyRelatedField(
+        many=True,
+        queryset=Tag.objects.all(),
+        write_only=True,
+        source='tags', # maps to tag field in Experience model
+        required=False
+    )
     class Meta:
         model=Experience
         fields='__all__'
