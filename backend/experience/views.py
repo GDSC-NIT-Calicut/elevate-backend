@@ -79,3 +79,13 @@ class ExperienceDetail(generics.RetrieveUpdateDestroyAPIView):
             instance.delete()
         else:
             raise PermissionDenied("You do not have permission to delete this experience.")
+
+class UnverifiedExperienceList(APIView):
+    authentication_classes = [JWTAuthentication]
+    permission_classes = [IsAdminorSPOC]
+
+    def get(self, request):
+        queryset = Experience.objects.filter(verified=False)
+        serializer = ExperienceSerializer(queryset, many=True, context={'request': request})
+        return Response(serializer.data, status=status.HTTP_200_OK)
+

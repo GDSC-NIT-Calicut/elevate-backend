@@ -66,3 +66,17 @@ class TagDetail(generics.RetrieveUpdateDestroyAPIView):
         if self.request.method=='GET':
             return [IsAuthenticated()]
         return [IsAdminorSPOC()]
+
+class TagsByTagType(APIView):
+    authentication_classes = [JWTAuthentication]
+    permission_classes = [IsAuthenticated]
+
+    def get(self, request, pk):
+        try:
+            tag_type = TagType.objects.get(pk=pk)
+        except TagType.DoesNotExist:
+            return Response({"detail": "Tag type not found."}, status=status.HTTP_404_NOT_FOUND)
+
+        tags = tag_type.tags.all()
+        serializer = TagSerializer(tags, many=True)
+        return Response(serializer.data, status=status.HTTP_200_OK)

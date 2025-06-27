@@ -6,6 +6,8 @@ POST/company: Creates a company with required fields
 
 GET/company/id: Fetches the details of that company
 
+GET/company/id/experiences: Fetches the experiences of a particular company
+
 PATCH/company/id: Update company details
 
 DELETE/company/id: Deletes company
@@ -18,6 +20,8 @@ POST/experience/create: Takes in required fields and creates an experience
 
 GET/experience/id: Fetches the details of that experience
 
+GET/experience/unverified: Fetches the unverified experiences (accessible by spoc or admin)
+
 PATCH/experience/id: Update experience details
 
 DELETE/experience/id: Deletes experience
@@ -29,6 +33,8 @@ GET /tag/type: Gives a list of all the tagtypes
 POST/tag/type: Creates a tagtype with required fields
 
 GET/tag/type/id: Fetches the details of that tagtype
+
+GET/tag/type/id/tags: Fetches all tags of the particular tagtype
 
 PATCH/tag/type/id: Update tagtype details
 
