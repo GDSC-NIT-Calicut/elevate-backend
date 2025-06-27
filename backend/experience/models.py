@@ -16,6 +16,7 @@ class Experience(models.Model):
     experience_date = models.DateField()
     visibility=models.BooleanField(default=True)
     verified = models.BooleanField(default=False)
+    stipend=models.IntegerField(default=0, blank=True, null=True)
     job_type=models.CharField(max_length=20, choices=[
         ('placement', 'placement'),
         ('internship', 'internship'),
