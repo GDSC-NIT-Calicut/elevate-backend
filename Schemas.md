@@ -29,6 +29,6 @@ creating experiences
     tag_ids=integer array of tag ids
 }
 
-Keep in mind the 'tag_ids' and 'type_id' (during post requests to tags and experience) 
+Keep in mind giving the tag body as 'tag_ids' and type body as'type_id' (requests to experience and tag endpoints ) 
 
 Do not give it as 'tags' and 'type'
