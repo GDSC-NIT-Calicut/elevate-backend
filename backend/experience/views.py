@@ -28,23 +28,19 @@ class IsAdminorSPOC(BasePermission):
 # useful when dealing with large datasets
 
 
-class ListExperience(APIView):
+class ListVerifiedExperience(APIView):
     authentication_classes=[JWTAuthentication]
     permission_classes=[IsAuthenticated]
 
     def post(self,request):
-        tags=request.data.get('tags',[])
+        tags=request.data.get('tag_ids',[])
         if not isinstance(tags, list):
             return Response({"error": "tags must be a list"}, status=400)
-        if request.user.role in ['admin','spoc']:
-            queryset= Experience.objects.all()
-        else:
-            queryset= Experience.objects.filter(
-                Q(visibility=True,verified=True) | Q(author=request.user)
-            ).distinct()
+
+        queryset= Experience.objects.filter(visibility=True,verified=True).distinct()
         
         if tags:
-            queryset=queryset.filter(tags__id__in=tags).distinct()
+            queryset=queryset.filter(tags__id__in=tags).distinct()  
         serializer = ExperienceSerializer(queryset, many=True, context={'request': request})
         return Response(serializer.data, status=200)
 
@@ -89,3 +85,9 @@ class UnverifiedExperienceList(APIView):
         serializer = ExperienceSerializer(queryset, many=True, context={'request': request})
         return Response(serializer.data, status=status.HTTP_200_OK)
 
+
+
+
+        # if request.user.role in ['admin','spoc']:
+        #     queryset= Experience.objects.all()
+        # else:
