@@ -14,13 +14,13 @@ DELETE/company/id: Deletes company
 
 
 
-POST /experience : takes tags list object as body of request, send search results of experiences with those tags, 
+POST /experience : takes tags list object as body of request, send search results of verified and visible experiences with those tags, 
 
 POST/experience/create: Takes in required fields and creates an experience
 
 GET/experience/id: Fetches the details of that experience
 
-GET/experience/unverified: Fetches the unverified experiences (accessible by spoc or admin)
+GET/experience/unverified: Fetches the unverified experiences (accessible by spoc or admin), to verify &| add tags send a put/patch request to /experience/id contianing the respective schema
 
 PATCH/experience/id: Update experience details
 
