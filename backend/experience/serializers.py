@@ -3,6 +3,8 @@ from .models import Experience
 from user.models import User
 from tag.models import Tag
 from tag.serializers import TagSerializer
+from company.serializers import CompanySerializer
+from company.models import Company
 
 class AuthorSerialzer(serializers.ModelSerializer):
     class Meta:
@@ -13,6 +15,13 @@ class AuthorSerialzer(serializers.ModelSerializer):
 
 class ExperienceSerializer(serializers.ModelSerializer):
     author=AuthorSerialzer(read_only=True)
+    company=CompanySerializer(read_only=True)
+    company_id=serializers.PrimaryKeyRelatedField(
+        queryset=Company.objects.all(),
+        source='company', # maps to company field in Experience model
+        write_only=True,
+        required=False
+    )
     tags=TagSerializer(many=True, read_only=True)
     tag_ids=serializers.PrimaryKeyRelatedField(
         many=True,
@@ -25,6 +34,12 @@ class ExperienceSerializer(serializers.ModelSerializer):
         model=Experience
         fields='__all__'
         read_only_fields=['author','published_date']
+    
+    def validate(self, attrs):
+        if(self.instance is None):
+            if 'company' not in attrs:
+                raise serializers.ValidationError("Company ID is required for creating an experience.")
+            return attrs
 
     def create(self,validated_data):
         tags=validated_data.pop('tags',[])
