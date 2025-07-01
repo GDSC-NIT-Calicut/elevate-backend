@@ -9,6 +9,6 @@ class TagType(models.Model):
         
 class Tag(models.Model):
     title = models.CharField(max_length=100, unique=True)
-    type= models.ForeignKey(TagType,on_delete=models.SET_NULL,null=True,blank=True)
+    type= models.ForeignKey(TagType,on_delete=models.SET_NULL,null=True,blank=True, related_name="tags")
     def __str__(self):
         return f"{self.title}- {self.type.name if self.type else 'No Type'}" 

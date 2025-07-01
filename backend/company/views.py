@@ -5,6 +5,7 @@ from .serializers import *
 from rest_framework.response import Response
 from rest_framework.views import APIView
 
+from experience.serializers import ExperienceSerializer
 
 from django.contrib.auth import authenticate
 from rest_framework_simplejwt.tokens import RefreshToken
@@ -44,3 +45,22 @@ class CompanyDetail(generics.RetrieveUpdateDestroyAPIView):
         if self.request.method=='GET':
             return [IsAuthenticated()]
         return [IsAdminorSPOC()]
+
+class CompanyExperienceList(APIView):
+    authentication_classes = [JWTAuthentication]
+    permission_classes = [IsAuthenticated]
+
+    def get(self, request, pk):
+        try:
+            company = Company.objects.get(pk=pk)
+        except Company.DoesNotExist:
+            return Response({"detail": "Company not found"}, status=status.HTTP_404_NOT_FOUND)
+
+        experiences = company.experiences.all()
+
+        if request.user.role not in ['admin', 'spoc']:
+            experiences = experiences.filter(visibility=True, verified=True)
+
+        serializer = ExperienceSerializer(experiences, many=True, context={'request': request})
+        return Response(serializer.data, status=status.HTTP_200_OK)
+

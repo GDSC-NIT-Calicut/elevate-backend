@@ -28,7 +28,7 @@ class ExperienceSerializer(serializers.ModelSerializer):
 
     def create(self,validated_data):
         tags=validated_data.pop('tags',[])
-        validated_data.pop('verified')
+        validated_data.pop('verified',None)
         experience=Experience.objects.create(**validated_data)
         experience.tags.set(tags)
         return experience
