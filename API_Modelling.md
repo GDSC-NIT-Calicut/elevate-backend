@@ -58,3 +58,7 @@ POST /user/google-oauth: Signs in a user/ Creates a new one
 
 POST/backup-email: Assigns a backup email to the user
 
+POST /user/set-pr: Sets the role of user to PR (can be accessed by SPOC or admins)
+
+POST /user/set-spoc: Sets the role of user to SPOC (can be accessed by SPOC or admins)
+

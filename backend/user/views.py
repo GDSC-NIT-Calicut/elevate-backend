@@ -26,6 +26,7 @@ from django.conf import settings
 
 from rest_framework.permissions import IsAdminUser,IsAuthenticated
 from rest_framework_simplejwt.authentication import JWTAuthentication
+from rest_framework.permissions import BasePermission
 
 CLIENT_ID=settings.CLIENT_ID
 
@@ -41,6 +42,10 @@ def verify_google_id_token(token: str):
         }
     except ValueError as e:
         return {"valid": False}
+
+class IsAdminOrSPOC(BasePermission):
+    def has_permission(self, request, view):
+        return request.user.is_authenticated and request.user.role in ['admin', 'spoc']        
         
 
 class Signin(APIView):
@@ -121,3 +126,43 @@ class Backup_Email(APIView):
                 "backup_email": user.backup_email
             }
         }, status=status.HTTP_200_OK)
+
+
+class SetPRRole(APIView):
+    authentication_classes = [JWTAuthentication]
+    permission_classes = [IsAdminOrSPOC]
+
+    def post(self, request):
+        email = request.data.get('email')
+
+        if not email:
+            return Response({"success": False, "message": "Email is required."}, status=400)
+
+        user = User.objects.filter(email=email).first()
+        if not user:
+            return Response({"success": False, "message": "User not found."}, status=404)
+
+        user.role = 'pr'
+        user.save()
+
+        return Response({"success": True, "message": f"{user.name} set as PR."}, status=200)
+
+
+class SetSPOCRole(APIView):
+    authentication_classes = [JWTAuthentication]
+    permission_classes = [IsAdminOrSPOC]
+
+    def post(self, request):
+        email = request.data.get('email')
+
+        if not email:
+            return Response({"success": False, "message": "Email is required."}, status=400)
+
+        user = User.objects.filter(email=email).first()
+        if not user:
+            return Response({"success": False, "message": "User not found."}, status=404)
+
+        user.role = 'spoc'
+        user.save()
+
+        return Response({"success": True, "message": f"{user.name} set as SPOC."}, status=200)
