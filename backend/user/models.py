@@ -23,8 +23,8 @@ class UserManager(BaseUserManager):
             user.set_unusable_password()
         user.save(using=self._db)
         return user
-    def create_superuser(self, email, name, roll_number, department, programme, role,password):
-        user = self.create_user(email, name, roll_number, department, programme, role,password)
+    def create_superuser(self, email, name,password):
+        user = self.create_user(email=email, name=name,role= "admin", department="admin", programme="admin", roll_number="admin",password= password)
         user.is_staff = True
         user.is_superuser = True
         user.save(using=self._db)
@@ -40,20 +40,21 @@ class User(AbstractBaseUser,PermissionsMixin):
     email = models.EmailField(unique=True)
     backup_email = models.EmailField(blank=True, null=True)
     name= models.CharField(max_length=100)
-    roll_number = models.CharField(max_length=20, unique=True)
-    department = models.CharField(max_length=100)
-    programme=models.CharField(max_length=100)
+    roll_number = models.CharField(max_length=20, null=True, blank=True)
+    department = models.CharField(max_length=100, null=True, blank=True)
+    programme=models.CharField(max_length=100, null=True, blank=True)
     role= models.CharField(max_length=20, choices=[
         ('student', 'student'),
         ('spoc', 'spoc'),
         ('pr','pr'),
-        ('admin', 'admin')
+        ('admin', 'admin'),
+        ('other', 'other')
     ])
     is_active = models.BooleanField(default=True)
     is_staff = models.BooleanField(default=False)
 
     USERNAME_FIELD = 'email'
-    REQUIRED_FIELDS = ['name', 'roll_number', 'department', 'programme', 'role']
+    REQUIRED_FIELDS = ['name']
 
     objects = UserManager()
 

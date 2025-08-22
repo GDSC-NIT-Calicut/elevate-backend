@@ -53,12 +53,12 @@ class ExperienceSerializer(serializers.ModelSerializer):
         role=getattr(request.user,'role',None)
         user=request.user
         
-        if 'verified' in validated_data and role not in ['admin','spoc']:
+        if 'verified' in validated_data and role not in ['admin','spoc','pr']:
             validated_data.pop('verified')
         
         if role=='admin' or user==instance.author :
             return super().update(instance,validated_data)
-        elif role=='spoc':
+        elif role=='spoc' or role=='pr':
             allowed_fields = {'verified', 'tags'}
             if any(field not in allowed_fields for field in validated_data.keys()):
                 raise serializers.ValidationError("Spocs can only update verification status and tags.")

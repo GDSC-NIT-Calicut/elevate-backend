@@ -22,6 +22,12 @@ class IsAdminorSPOC(BasePermission):
     def has_permission(self, request, view):
         return request.user.is_authenticated and (request.user.role=='spoc' or request.user.role=='admin')
 
+
+class IsAdminorSPOCorPR(BasePermission):
+
+    def has_permission(self, request, view):
+        return request.user.is_authenticated and (request.user.role=='spoc' or request.user.role=='admin' or request.user.role=='pr')
+
 class ListCreateCompany(generics.ListCreateAPIView):
     authentication_classes=[JWTAuthentication]
     queryset=Company.objects.all()
@@ -39,20 +45,23 @@ class CompanyDetail(generics.RetrieveUpdateDestroyAPIView):
     
     queryset=Company.objects.all()
     serializer_class=CompanySerializer
+    lookup_field='slug'
 
 
     def get_permissions(self):
         if self.request.method=='GET':
             return [IsAuthenticated()]
-        return [IsAdminorSPOC()]
+        return [IsAdminorSPOCorPR()]
 
 class CompanyExperienceList(APIView):
     authentication_classes = [JWTAuthentication]
     permission_classes = [IsAuthenticated]
 
-    def get(self, request, pk):
+    lookup_field='slug'
+
+    def get(self, request, slug):
         try:
-            company = Company.objects.get(pk=pk)
+            company = Company.objects.get(slug=slug)
         except Company.DoesNotExist:
             return Response({"detail": "Company not found"}, status=status.HTTP_404_NOT_FOUND)
 

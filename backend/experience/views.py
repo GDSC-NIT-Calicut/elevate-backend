@@ -21,6 +21,12 @@ class IsAdminorSPOC(BasePermission):
 
     def has_permission(self, request, view):
         return request.user.is_authenticated and (request.user.role=='spoc' or request.user.role=='admin')
+
+
+class IsAdminorSPOCorPR(BasePermission):
+
+    def has_permission(self, request, view):
+        return request.user.is_authenticated and (request.user.role=='spoc' or request.user.role=='admin' or request.user.role=='pr')
     
 # We use the module Q since writing :             
 # return Experience.objects.filter(visibility=True).filter(verified=True) | Experience.objects.filter(author=user)
@@ -78,7 +84,7 @@ class ExperienceDetail(generics.RetrieveUpdateDestroyAPIView):
 
 class UnverifiedExperienceList(APIView):
     authentication_classes = [JWTAuthentication]
-    permission_classes = [IsAdminorSPOC]
+    permission_classes = [IsAdminorSPOCorPR]
 
     def get(self, request):
         queryset = Experience.objects.filter(verified=False)
