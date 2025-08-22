@@ -11,7 +11,7 @@ class Experience(models.Model):
     title = models.CharField(max_length=200)
     role = models.CharField(max_length=100)
     short_description = models.TextField()
-    content = models.TextField()
+    content = models.TextField(null=True, blank=True)
     published_date = models.DateTimeField(auto_now_add=True)
     experience_date = models.DateField()
     visibility=models.BooleanField(default=True)
@@ -26,3 +26,7 @@ class Experience(models.Model):
     author=models.ForeignKey(User,on_delete=models.CASCADE,related_name='experiences')
     company = models.ForeignKey(Company, on_delete=models.CASCADE, related_name='experiences')
     tags=models.ManyToManyField(Tag, related_name='experiences', blank=True)
+
+
+    def __str__(self):
+        return f" {self.author.name} | {self.company.name} | {self.title}"
