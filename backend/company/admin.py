@@ -5,6 +5,6 @@ from .models import Company
 
 
 class CompanyAdmin(admin.ModelAdmin):
-    list_display=['name','website','logo_tag']
+    list_display=['name','logo_tag']
 
 admin.site.register(Company,CompanyAdmin)
