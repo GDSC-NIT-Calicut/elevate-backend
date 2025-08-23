@@ -8,8 +8,6 @@ class Company(models.Model):
     slug = models.SlugField(max_length=200, unique=True)
     logo = models.ImageField(upload_to="company_logos/")
     description = models.TextField()
-    website = models.URLField(blank=True, null=True)
-    
     
     def __str__(self):
         return self.name

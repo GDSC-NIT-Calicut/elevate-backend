@@ -166,3 +166,6 @@ class SetSPOCRole(APIView):
         user.save()
 
         return Response({"success": True, "message": f"{user.name} set as SPOC."}, status=200)
+    
+
+#Profile Page
