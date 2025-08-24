@@ -51,10 +51,10 @@ INSTALLED_APPS = [
 
     'corsheaders',
 
-    'company',
-    'experience',
-    'tag',
-    'user',
+    'backend.company',
+    'backend.experience',
+    'backend.tag',
+    'backend.user',
     'rest_framework',
     'rest_framework_simplejwt',
 ]
