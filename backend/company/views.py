@@ -5,7 +5,7 @@ from .serializers import *
 from rest_framework.response import Response
 from rest_framework.views import APIView
 
-from experience.serializers import ExperienceSerializer
+from backend.experience.serializers import ExperienceSerializer
 
 from django.contrib.auth import authenticate
 from rest_framework_simplejwt.tokens import RefreshToken
