@@ -159,8 +159,8 @@ import dj_database_url
 DATABASES = {
     'default': dj_database_url.config(
         default=config("DATABASE_URL"),  # Render gives you this environment variable
-        conn_max_age=600,                # keeps connections alive for performance
-        ssl_require=True                 # important: Render Postgres requires SSL
+        # conn_max_age=600,                # keeps connections alive for performance
+        # ssl_require=True                 # important: Render Postgres requires SSL
     )
 }
 
