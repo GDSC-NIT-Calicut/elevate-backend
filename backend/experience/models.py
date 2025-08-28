@@ -31,6 +31,6 @@ class Experience(models.Model):
     company = models.ForeignKey(Company, on_delete=models.CASCADE, related_name='experiences')
     tags=models.ManyToManyField(Tag, related_name='experiences', blank=True)
 
-
+    saved_by=models.ManyToManyField(User, related_name='saved_experiences', blank=True)
     def __str__(self):
         return f" {self.author.name} | {self.company.name} | {self.title}"
