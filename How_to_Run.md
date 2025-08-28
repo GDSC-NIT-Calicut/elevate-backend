@@ -1,9 +1,10 @@
 Create a virtual environment inside elevate-backend.
 To activate it
 
-`python3 -m venv venv`
-
-`source venv/bin/activate`
+```shell
+python3 -m venv venv
+source venv/bin/activate
+```
 
 
 Make a .env file in elevate-backend/backend (the same folder as the manage.py file) and add CLIENT_ID
@@ -13,33 +14,44 @@ Make a .env file in elevate-backend/backend (the same folder as the manage.py fi
 
 Install the requirements whenever pulling from the repo to make sure you have all the required libraries 
 
-`pip install -r requirements.txt`
+```shell
+pip install -r requirements.txt
+```
 
 
 Run migrations whenever you pull from the repo to ensure the changes made in the models are applied to your db
 
-`python manage.py makemigrations`
-
-`python manage.py migrate`
+```shell
+python manage.py makemigrations
+python manage.py migrate
+```
 
 
 To start the app run 
 
-`python manage.py runserver`
+```shell
+python manage.py runserver
+```
 
 To create a superuser (admin) run 
 
-`python manage.py createsuperuser`
+```shell
+python manage.py createsuperuser
+```
 
 Login to the admin panel at localhost:8000/admin on the browser (If you edit a user, as of now it wont let you save thier details without a password, add a dummy password if editing the details of the users in the admin panel. We changee the roles of students in here to 'pr','spoc' or 'admin')
 
-Fill in the details that come up. Go to localhost:8000/admin to access the admin portal
+Fill in the details that come up. Go to [localhost:8000/](localhost:8000) admin to access the admin portal
 
 If you have to additionally install any libraries, ACTIVATE THE VIRTUAL ENVIRONMENT and then install the library using
 
-`pip install <package-name>` 
+```shell
+pip install <package-name>
+``` 
 
 Then in the root directory (the one with the README.md) run
 
-`pip freeze > requirements.txt` 
+```shell
+pip freeze > requirements.txt
+``` 
 
