@@ -51,10 +51,10 @@ INSTALLED_APPS = [
 
     'corsheaders',
 
-    'backend.company',
-    'backend.experience',
-    'backend.tag',
-    'backend.user',
+    'company',
+    'experience',
+    'tag',
+    'user',
     'rest_framework',
     'rest_framework_simplejwt',
 ]
@@ -76,7 +76,7 @@ CORS_ALLOWED_ORIGINS = [
 ]
 CORS_ALLOW_CREDENTIALS = True
 
-ROOT_URLCONF = 'backend.backend.urls'
+ROOT_URLCONF = 'backend.urls'
 
 TEMPLATES = [
     {

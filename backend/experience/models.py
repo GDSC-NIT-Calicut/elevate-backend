@@ -1,8 +1,8 @@
 from django.db import models
 
-from backend.user.models import User
-from backend.company.models import Company
-from backend.tag.models import Tag
+from user.models import User
+from company.models import Company
+from tag.models import Tag
 
 # Create your models here.
 

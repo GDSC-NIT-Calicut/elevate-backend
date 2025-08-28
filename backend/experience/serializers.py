@@ -1,10 +1,10 @@
 from rest_framework import serializers
 from .models import Experience
-from backend.user.models import User
-from backend.tag.models import Tag
-from backend.tag.serializers import TagSerializer
-from backend.company.serializers import CompanySerializer
-from backend.company.models import Company
+from user.models import User
+from tag.models import Tag
+from tag.serializers import TagSerializer
+from company.serializers import CompanySerializer
+from company.models import Company
 
 class AuthorSerialzer(serializers.ModelSerializer):
     class Meta:
