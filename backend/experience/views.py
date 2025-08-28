@@ -92,8 +92,11 @@ class UnverifiedExperienceList(APIView):
         return Response(serializer.data, status=status.HTTP_200_OK)
 
 
-
-
-        # if request.user.role in ['admin','spoc']:
-        #     queryset= Experience.objects.all()
-        # else:
+class MyExperienceList(generics.ListAPIView):
+    authentication_classes = [JWTAuthentication]
+    permission_classes = [IsAuthenticated]
+    serializer_class = ExperienceSerializer
+    def get_queryset(self):
+        queryset = Experience.objects.filter(author=self.request.user)
+        return queryset
+        
