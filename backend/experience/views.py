@@ -99,4 +99,29 @@ class MyExperienceList(generics.ListAPIView):
     def get_queryset(self):
         queryset = Experience.objects.filter(author=self.request.user)
         return queryset
-        
+
+class SaveUnsaveExperience(APIView):
+    authentication_classes=[JWTAuthentication]
+    permission_classes=[IsAuthenticated]
+
+    def post(self,request,pk):
+        user=request.user
+
+        try:
+            experience=Experience.objects.get(pk=pk)
+        except Experience.DoesNotExist:
+            return Response({"error":"Experience not found"},status=404)
+        if experience.saved_by.filter(id=user.id).exists():
+            experience.saved_by.remove(user)
+            return Response({"message":"Experience unsaved"},status=200)
+        else:
+            experience.saved_by.add(user)
+            return Response({"message":"Experience saved"},status=200)
+
+class SavedExperiencesList(generics.ListAPIView):
+    authentication_classes=[JWTAuthentication]
+    permission_classes=[IsAuthenticated]
+    serializer_class=ExperienceSerializer
+
+    def get_queryset(self):
+        return self.request.user.saved_experiences.all().order_by('-id')
