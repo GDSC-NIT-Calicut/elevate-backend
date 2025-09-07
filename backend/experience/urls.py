@@ -9,4 +9,6 @@ urlpatterns=[
     path('/self', MyExperienceList.as_view(), name='my-experiences'),
     path('/<int:pk>/save_unsave', SaveUnsaveExperience.as_view(), name='save-unsave-experience'),
     path('/saved', SavedExperiencesList.as_view(), name='saved-experiences'),
+    path('/search', ExperienceSearch.as_view(), name='experience-search'),
+    path('/analytics', ExperienceAnalytics.as_view(), name='experience-analytics'),
 ]

@@ -80,3 +80,24 @@ class TagsByTagType(APIView):
         tags = tag_type.tags.all()
         serializer = TagSerializer(tags, many=True)
         return Response(serializer.data, status=status.HTTP_200_OK)
+
+
+class TagSearch(APIView):
+    authentication_classes = [JWTAuthentication]
+    permission_classes = [IsAuthenticated]
+
+    def get(self, request):
+        from django.db.models import Q
+        
+        search_query = request.query_params.get('search', '')
+        
+        if search_query:
+            tags = Tag.objects.filter(
+                Q(title__icontains=search_query) |
+                Q(type__name__icontains=search_query)
+            ).order_by('title')
+        else:
+            tags = Tag.objects.all().order_by('title')
+        
+        serializer = TagSerializer(tags, many=True)
+        return Response(serializer.data, status=status.HTTP_200_OK)

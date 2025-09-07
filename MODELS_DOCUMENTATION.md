@@ -34,6 +34,7 @@ This document was automatically generated from Django model files.
 | author | ForeignKey | - | Related name: experiences |
 | company | ForeignKey | - | Related name: experiences |
 | tags | ManyToManyField | blank | Related name: experiences |
+| saved_by | ManyToManyField | blank | Related name: saved_experiences |
 
 ## Tag App
 

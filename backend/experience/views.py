@@ -125,3 +125,121 @@ class SavedExperiencesList(generics.ListAPIView):
 
     def get_queryset(self):
         return self.request.user.saved_experiences.all().order_by('-id')
+
+
+class ExperienceSearch(APIView):
+    authentication_classes = [JWTAuthentication]
+    permission_classes = [IsAuthenticated]
+
+    def post(self, request):
+        # Get search parameters
+        search_query = request.data.get('search', '')
+        company = request.data.get('company', '')
+        role = request.data.get('role', '')
+        year = request.data.get('year', '')
+        department = request.data.get('department', '')
+        offer_type = request.data.get('offerType', '')
+        verified = request.data.get('verified', '')
+        tags = request.data.get('tags', [])
+        date_range = request.data.get('dateRange', {})
+
+        # Start with verified and visible experiences
+        queryset = Experience.objects.filter(visibility=True, verified=True)
+
+        # Apply filters
+        if search_query:
+            queryset = queryset.filter(
+                Q(title__icontains=search_query) |
+                Q(role__icontains=search_query) |
+                Q(short_description__icontains=search_query) |
+                Q(company__name__icontains=search_query) |
+                Q(author__name__icontains=search_query)
+            )
+
+        if company:
+            queryset = queryset.filter(company__slug=company)
+
+        if role:
+            queryset = queryset.filter(role__icontains=role)
+
+        if year:
+            queryset = queryset.filter(experience_date__year=year)
+
+        if department:
+            queryset = queryset.filter(author__department=department)
+
+        if offer_type:
+            queryset = queryset.filter(job_type=offer_type)
+
+        if verified == 'verified':
+            queryset = queryset.filter(verified=True)
+        elif verified == 'unverified':
+            queryset = queryset.filter(verified=False)
+
+        if tags:
+            queryset = queryset.filter(tags__id__in=tags).distinct()
+
+        if date_range.get('start'):
+            from datetime import datetime
+            start_date = datetime.strptime(date_range['start'], '%Y-%m-%d').date()
+            queryset = queryset.filter(experience_date__gte=start_date)
+
+        if date_range.get('end'):
+            from datetime import datetime
+            end_date = datetime.strptime(date_range['end'], '%Y-%m-%d').date()
+            queryset = queryset.filter(experience_date__lte=end_date)
+
+        # Order by published date
+        queryset = queryset.order_by('-published_date')
+
+        serializer = ExperienceSerializer(queryset, many=True, context={'request': request})
+        return Response(serializer.data, status=status.HTTP_200_OK)
+
+
+class ExperienceAnalytics(APIView):
+    authentication_classes = [JWTAuthentication]
+    permission_classes = [IsAdminorSPOCorPR]
+
+    def get(self, request):
+        from django.db.models import Count
+        from datetime import datetime, timedelta
+
+        # Basic counts
+        total_experiences = Experience.objects.count()
+        verified_experiences = Experience.objects.filter(verified=True).count()
+        pending_experiences = Experience.objects.filter(verified=False).count()
+        verification_rate = (verified_experiences / total_experiences * 100) if total_experiences > 0 else 0
+
+        # Experiences by month (last 6 months)
+        six_months_ago = datetime.now() - timedelta(days=180)
+        experiences_by_month = Experience.objects.filter(
+            published_date__gte=six_months_ago
+        ).extra(
+            select={'month': "DATE_TRUNC('month', published_date)"}
+        ).values('month').annotate(count=Count('id')).order_by('month')
+
+        # Experiences by company (top 10)
+        experiences_by_company = Experience.objects.values('company__name').annotate(
+            count=Count('id')
+        ).order_by('-count')[:10]
+
+        # Experiences by department
+        experiences_by_department = Experience.objects.values('author__department').annotate(
+            count=Count('id')
+        ).order_by('-count')
+
+        # Experiences by job type
+        experiences_by_job_type = Experience.objects.values('job_type').annotate(
+            count=Count('id')
+        ).order_by('-count')
+
+        return Response({
+            'total_experiences': total_experiences,
+            'verified_experiences': verified_experiences,
+            'pending_experiences': pending_experiences,
+            'verification_rate': round(verification_rate, 2),
+            'experiences_by_month': list(experiences_by_month),
+            'experiences_by_company': list(experiences_by_company),
+            'experiences_by_department': list(experiences_by_department),
+            'experiences_by_job_type': list(experiences_by_job_type),
+        }, status=status.HTTP_200_OK)

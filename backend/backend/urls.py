@@ -19,14 +19,18 @@ from django.urls import path, include
 from rest_framework_simplejwt.views import TokenObtainPairView, TokenRefreshView
 from django.conf import settings
 from django.conf.urls.static import static
+from .views import Test
 
 urlpatterns = [
+    path('api/test', Test.as_view(), name='test'),
     path('admin/', admin.site.urls),
 
     path('api/user', include('user.urls')),
     path('api/company', include('company.urls')),
     path('api/experience', include('experience.urls')),
     path('api/tag', include('tag.urls')),
+    path('api/opportunity', include('opportunity.urls')),
+    path('api/analytics', include('analytics.urls')),
     
     path('api/token/',TokenObtainPairView.as_view(),name='token_obtain_pair'),
     path('api/token/refresh/',TokenRefreshView.as_view(),name='token_refresh')

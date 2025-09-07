@@ -43,7 +43,7 @@ def verify_google_id_token(token: str):
     except ValueError as e:
         return {"valid": False}
 
-class IsAdminOrSPOC(BasePermission):
+class IsAdminorSPOC(BasePermission):
     def has_permission(self, request, view):
         return request.user.is_authenticated and request.user.role in ['admin', 'spoc']        
         
@@ -130,7 +130,7 @@ class Backup_Email(APIView):
 
 class SetPRRole(APIView):
     authentication_classes = [JWTAuthentication]
-    permission_classes = [IsAdminOrSPOC]
+    permission_classes = [IsAdminorSPOC]
 
     def post(self, request):
         email = request.data.get('email')
@@ -150,7 +150,7 @@ class SetPRRole(APIView):
 
 class SetSPOCRole(APIView):
     authentication_classes = [JWTAuthentication]
-    permission_classes = [IsAdminOrSPOC]
+    permission_classes = [IsAdminorSPOC]
 
     def post(self, request):
         email = request.data.get('email')
@@ -169,3 +169,124 @@ class SetSPOCRole(APIView):
     
 
 #Profile Page
+class UserProfile(APIView):
+    authentication_classes = [JWTAuthentication]
+    permission_classes = [IsAuthenticated]
+
+    def get(self, request):
+        user = request.user
+        return Response({
+            "success": True,
+            "user": {
+                "id": user.id,
+                "email": user.email,
+                "backup_email": user.backup_email,
+                "name": user.name,
+                "roll_number": user.roll_number,
+                "department": user.department,
+                "programme": user.programme,
+                "role": user.role,
+                "is_active": user.is_active,
+                "is_staff": user.is_staff
+            }
+        }, status=status.HTTP_200_OK)
+
+    def patch(self, request):
+        user = request.user
+        data = request.data
+
+        # Allow users to update their own profile
+        allowed_fields = ['backup_email', 'name', 'roll_number', 'department', 'programme']
+        for field in allowed_fields:
+            if field in data:
+                setattr(user, field, data[field])
+
+        user.save()
+
+        return Response({
+            "success": True,
+            "message": "Profile updated successfully",
+            "user": {
+                "id": user.id,
+                "email": user.email,
+                "backup_email": user.backup_email,
+                "name": user.name,
+                "roll_number": user.roll_number,
+                "department": user.department,
+                "programme": user.programme,
+                "role": user.role
+            }
+        }, status=status.HTTP_200_OK)
+
+
+class UserList(generics.ListAPIView):
+    authentication_classes = [JWTAuthentication]
+    permission_classes = [IsAdminorSPOC]
+    serializer_class = UserSerializer
+
+    def get_queryset(self):
+        return User.objects.all().order_by('-id')
+
+    def list(self, request, *args, **kwargs):
+        queryset = self.get_queryset()
+        serializer = self.get_serializer(queryset, many=True)
+        return Response({
+            "success": True,
+            "users": serializer.data
+        }, status=status.HTTP_200_OK)
+
+
+class UserDetail(generics.RetrieveUpdateDestroyAPIView):
+    authentication_classes = [JWTAuthentication]
+    permission_classes = [IsAdminorSPOC]
+    serializer_class = UserSerializer
+    queryset = User.objects.all()
+    lookup_field = 'id'
+
+    def retrieve(self, request, *args, **kwargs):
+        instance = self.get_object()
+        serializer = self.get_serializer(instance)
+        return Response({
+            "success": True,
+            "user": serializer.data
+        }, status=status.HTTP_200_OK)
+
+    def update(self, request, *args, **kwargs):
+        partial = kwargs.pop('partial', False)
+        instance = self.get_object()
+        serializer = self.get_serializer(instance, data=request.data, partial=partial)
+        serializer.is_valid(raise_exception=True)
+        self.perform_update(serializer)
+
+        return Response({
+            "success": True,
+            "message": "User updated successfully",
+            "user": serializer.data
+        }, status=status.HTTP_200_OK)
+
+    def destroy(self, request, *args, **kwargs):
+        instance = self.get_object()
+        self.perform_destroy(instance)
+        return Response({
+            "success": True,
+            "message": "User deleted successfully"
+        }, status=status.HTTP_200_OK)
+
+
+class UserByRollNumber(APIView):
+    authentication_classes = [JWTAuthentication]
+    permission_classes = [IsAuthenticated]
+
+    def get(self, request, roll_number):
+        try:
+            user = User.objects.get(roll_number=roll_number)
+            serializer = UserSerializer(user)
+            return Response({
+                "success": True,
+                "user": serializer.data
+            }, status=status.HTTP_200_OK)
+        except User.DoesNotExist:
+            return Response({
+                "success": False,
+                "message": "User not found"
+            }, status=status.HTTP_404_NOT_FOUND)
