@@ -8,7 +8,7 @@ from .models import Opportunity, Mentorship, Notification
 from .serializers import OpportunitySerializer, MentorshipSerializer, NotificationSerializer
 from user.models import User
 from user.serializers import UserSerializer
-
+from rest_framework_simplejwt.authentication import JWTAuthentication
 class IsAdminorSPOCorPR(BasePermission):
     def has_permission(self, request, view):
         return request.user.is_authenticated and (request.user.role=='spoc' or request.user.role=='admin' or request.user.role=='pr')
